@@ -1,29 +1,46 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt');
-const faker = require('faker');
-
-// Mocking data
-const mockUsers = [];
-const generateMockUsers = (count) => {
-    for (let i = 0; i < count; i++) {
-        mockUsers.push({
-            id: i + 1,
-            name: faker.name.findName(),
-            email: faker.internet.email(),
-            password: bcrypt.hashSync('coder123', 10), // Contraseña encriptada
-            role: Math.random() > 0.5 ? 'user' : 'admin', // Alterna entre user y admin
-            pets: [] // Array vacío
-        });
-    }
-};
+const { generateUsers, generatePets } = require('../services/mockingModule');
+const database = require('../database/database');
 
 // Endpoint para obtener usuarios mockeados
 router.get('/mockingusers', (req, res) => {
-    if (mockUsers.length === 0) {
-        generateMockUsers(50); // Genera 50 usuarios
+    if (database.users.length === 0) {
+        database.users = generateUsers(50); // Genera 50 usuarios si la DB está vacía
     }
-    res.json(mockUsers);
+    res.json(database.users);
+});
+
+// Endpoint para obtener mascotas mockeadas
+router.get('/mockingpets', (req, res) => {
+    if (database.pets.length === 0) {
+        database.pets = generatePets(20);
+    }
+    res.json(database.pets);
+});
+
+// Endpoint para generar datos y guardarlos en la "base de datos"
+router.post('/generateData', (req, res) => {
+    const { users, pets } = req.body;
+
+    if (users && Number(users)) {
+        database.users.push(...generateUsers(Number(users)));
+    }
+    if (pets && Number(pets)) {
+        database.pets.push(...generatePets(Number(pets)));
+    }
+
+    res.json({ message: 'Data generated successfully', database });
+});
+
+// Endpoint para verificar usuarios insertados
+router.get('/users', (req, res) => {
+    res.json(database.users);
+});
+
+// Endpoint para verificar mascotas insertadas
+router.get('/pets', (req, res) => {
+    res.json(database.pets);
 });
 
 module.exports = router;
