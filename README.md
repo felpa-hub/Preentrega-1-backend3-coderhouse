@@ -1,4 +1,5 @@
 # Preentrega-1-backend3-coderhouse
  Mocking API
 
-Esta API genera datos ficticios de usuarios y mascotas.
+## Descripción
+API para la adopción de mascotas, desarrollada con Node.js, Express y MongoDB..
