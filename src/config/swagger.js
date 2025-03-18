@@ -1,22 +1,22 @@
-const swaggerJsdoc = require("swagger-jsdoc");
-const swaggerUi = require("swagger-ui-express");
+const swaggerJsdoc = require('swagger-jsdoc');
 
 const options = {
   definition: {
-    openapi: "3.0.0",
+    openapi: '3.0.0',
     info: {
-      title: "AdoptMe API",
-      version: "1.0.0",
-      description: "API para adopción de mascotas",
+      title: 'AdoptMe API',
+      version: '1.0.0',
+      description: 'API para la adopción de mascotas'
     },
+    servers: [
+      {
+        url: 'http://localhost:3000'
+      }
+    ]
   },
-  apis: ["./src/routes/*.js"],
+  apis: ['./src/routes/*.js']
 };
 
 const swaggerSpec = swaggerJsdoc(options);
 
-const setupSwagger = (app) => {
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-};
-
-module.exports = setupSwagger;
+module.exports = swaggerSpec;
