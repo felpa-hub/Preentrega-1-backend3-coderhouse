@@ -1,28 +1,38 @@
 const express = require('express');
-const app = express();
-const { PORT } = require('../config/config');
-const mocksRouter = require('./routes/mocks.router');
 const mongoose = require('mongoose');
+const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./config/swagger');
+const { PORT, MONGODB_URI } = require('./config/config');
+const userRoutes = require('./routes/user.router');
+const petRoutes = require('./routes/pet.router');
+const adoptionRoutes = require('./routes/adoption.router');
+
 require('dotenv').config();
-const { MONGODB_URI, PORT } = process.env;
-const setupSwagger = require('./config/swagger');
-setupSwagger(app);
 
+const app = express();
 
+// Middlewares
+app.use(cors());
+app.use(express.json());
+
+// Conexión a MongoDB
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true,
+  useUnifiedTopology: true
 })
-.then(() => console.log('Conexión a MongoDB establecida'))
-.catch((error) => console.error('Error al conectar a MongoDB:', error));
-
-
-app.use(express.json()); // Middleware para parsear JSON
+.then(() => console.log('Conectado a MongoDB'))
+.catch(err => console.error('Error conectando a MongoDB', err));
 
 // Rutas
-app.use('/api/mocks', mocksRouter);
+app.use('/users', userRoutes);
+app.use('/pets', petRoutes);
+app.use('/adoptions', adoptionRoutes);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Iniciar el servidor
+// Iniciar servidor
 app.listen(PORT, () => {
-    console.log(Server running on port ${PORT});
+  console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
+
+module.exports = app; // Para usar en las pruebas
