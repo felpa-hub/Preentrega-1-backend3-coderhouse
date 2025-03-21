@@ -35,4 +35,6 @@
  
  ```bash 
  npm test 
- ``` 
+ ```
+
+-disculpa la tardanza pero hasta hoy(21/3) no logre tener una computadora en la que podia instalar docker y otros programas tranquilo, asi que hoy agregare el repo de docker hub
